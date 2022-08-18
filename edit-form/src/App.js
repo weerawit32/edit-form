@@ -1,9 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { Fragment, useEffect, useState } from "react";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 import * as yup from "yup";
-import { userSchema} from './Validations/UserValidation';
+import { userSchema } from "./Validations/UserValidation";
 // import Table from 'react-bootstrap/Table';
 
 function App() {
@@ -18,11 +18,9 @@ function App() {
     };
   });
 
-
   const { name, age } = person;
 
   const handleOnChange = (e) => {
-    
     setPerson({ ...person, [e.target.name]: e.target.value, id: small_id });
     console.log(person);
   };
@@ -30,17 +28,18 @@ function App() {
   const handleOnSubmit = (e) => {
     e.preventDefault();
     setPeople([...people, person]);
-   
+    setPerson({ name: "", age: "" });
+
     console.log(person);
   };
 
   useEffect(() => {
     console.log(people);
-  },[people]);
+  }, [people]);
 
   return (
     <div>
-      <PeopleList people={people}/>
+      <PeopleList people={people} />
       <div className="App">
         <form onSubmit={handleOnSubmit}>
           <input
@@ -50,7 +49,7 @@ function App() {
             value={name}
             onChange={handleOnChange}
             required
-            ></input>
+          ></input>
           <input
             placeholder="Enter Your age..."
             type="text"
@@ -58,7 +57,7 @@ function App() {
             value={age}
             onChange={handleOnChange}
             required
-            ></input>
+          ></input>
           <button>OK</button>
         </form>
       </div>
@@ -66,18 +65,7 @@ function App() {
   );
 }
 
-const PeopleList = ({people}) => {
-  const [editable, setEditable] = useState(true);
-  const [cacheData, setCacheData] = useState({});
-
-  const handleEdit = () => {
-    // setCacheData(perso)
-    setEditable(false);
-  }
-
-  const handleDelete = () => {
-    
-  }
+const PeopleList = ({ people }) => {
   return (
     <table striped bordered hover>
       <thead>
@@ -87,36 +75,55 @@ const PeopleList = ({people}) => {
           <th>Action</th>
         </tr>
       </thead>
-      {people && people.map((person) => {
-        const {id, name, age} = person;
-        return (
-        <tbody key={id}>
-        <tr>
-          <td> <input
+      {people && people.map((data) => <TableContent data={data} />)}
+    </table>
+  );
+};
+
+const TableContent = ({ data }) => {
+  const { id, name, age } = data;
+  const [editable, setEditable] = useState(true);
+  const [cacheData, setCacheData] = useState({});
+  // const [datas, setDatas] = useState({
+  //   name,
+  //   age,
+  //   id,
+  // });
+
+  const handleOnChange = (e) => {
+    // setDatas({ ...datas, [e.target.name]: e.target.value });
+  };
+
+  const handleEdit = () => {
+    // setCacheData(perso)
+    setEditable(!editable);
+  };
+
+  const handleDelete = () => {};
+
+  return (
+    <tbody key={id}>
+      <tr>
+        <td>
+          {" "}
+          <input
             readOnly={editable}
             placeholder="Enter Your name..."
             type="text"
             name="name"
             value={name}
-            // onChange={handleOnChange}
+            onChange={handleOnChange}
             required
-            ></input>
-          </td>
-          <td>{age}</td>
-          <td>
+          ></input>
+        </td>
+        <td>{age}</td>
+        <td>
           <button onClick={handleEdit}>Edit</button>
           <button onClick={handleDelete}>delete</button>
-          </td>
-        </tr>
-        
-      </tbody>
-        )
-      }
-      )}
-      
-    </table>
-  )
-
-}
+        </td>
+      </tr>
+    </tbody>
+  );
+};
 
 export default App;
