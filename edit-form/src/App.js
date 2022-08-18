@@ -2,6 +2,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Fragment, useEffect, useState } from "react";
 import { v4 as uuid } from 'uuid';
+import * as yup from "yup";
+import { userSchema} from './Validations/UserValidation';
 // import Table from 'react-bootstrap/Table';
 
 function App() {
@@ -65,12 +67,24 @@ function App() {
 }
 
 const PeopleList = ({people}) => {
+  const [editable, setEditable] = useState(true);
+  const [cacheData, setCacheData] = useState({});
+
+  const handleEdit = () => {
+    // setCacheData(perso)
+    setEditable(false);
+  }
+
+  const handleDelete = () => {
+    
+  }
   return (
     <table striped bordered hover>
       <thead>
         <tr>
           <th> Name</th>
           <th>Age</th>
+          <th>Action</th>
         </tr>
       </thead>
       {people && people.map((person) => {
@@ -78,8 +92,21 @@ const PeopleList = ({people}) => {
         return (
         <tbody key={id}>
         <tr>
-          <td>{name}</td>
+          <td> <input
+            readOnly={editable}
+            placeholder="Enter Your name..."
+            type="text"
+            name="name"
+            value={name}
+            // onChange={handleOnChange}
+            required
+            ></input>
+          </td>
           <td>{age}</td>
+          <td>
+          <button onClick={handleEdit}>Edit</button>
+          <button onClick={handleDelete}>delete</button>
+          </td>
         </tr>
         
       </tbody>
