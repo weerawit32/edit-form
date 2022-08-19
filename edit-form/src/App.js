@@ -20,6 +20,24 @@ function App() {
 
   const { name, age } = person;
 
+  const handleOnEdit = (id, data) => {
+    setPeople((prevPeople) => {
+      const index = prevPeople.findIndex(person => person.id === id);
+      const newPeople = [...prevPeople];
+      newPeople[index] = data;
+      
+      return newPeople;
+    })
+  }
+
+  const onDelete = (id) => {
+    setPeople((prevPeople) => {
+      const newPeople = prevPeople.filter(person => person.id !== id);
+      
+      return newPeople;
+    })
+  }
+
   const handleOnChange = (e) => {
     setPerson({ ...person, [e.target.name]: e.target.value, id: small_id });
     console.log(person);
@@ -39,7 +57,7 @@ function App() {
 
   return (
     <div>
-      <PeopleList people={people} />
+      <PeopleList people={people} handleOnEdit={handleOnEdit} onDelete={onDelete} />
       <div className="App">
         <form onSubmit={handleOnSubmit}>
           <input
@@ -65,7 +83,7 @@ function App() {
   );
 }
 
-const PeopleList = ({ people }) => {
+const PeopleList = ({ people, handleOnEdit, onDelete }) => {
   return (
     <table striped bordered hover>
       <thead>
@@ -75,15 +93,15 @@ const PeopleList = ({ people }) => {
           <th>Action</th>
         </tr>
       </thead>
-      {people && people.map((data) => <TableContent data={data} />)}
+      {people && people.map((data) => <TableContent key={data.id} data={data} handleOnEdit={handleOnEdit} onDelete={onDelete} />)}
     </table>
   );
 };
 
-const TableContent = ({ data }) => {
+const TableContent = ({ data, handleOnEdit, onDelete }) => {
   const { id, name, age } = data;
   const [editable, setEditable] = useState(true);
-  const [cacheData, setCacheData] = useState({});
+  const [cacheData, setCacheData] = useState(null);
   // const [datas, setDatas] = useState({
   //   name,
   //   age,
@@ -92,14 +110,27 @@ const TableContent = ({ data }) => {
 
   const handleOnChange = (e) => {
     // setDatas({ ...datas, [e.target.name]: e.target.value });
+    handleOnEdit(id, {...data, [e.target.name]: e.target.value});
   };
 
   const handleEdit = () => {
-    // setCacheData(perso)
+    setCacheData(data);
     setEditable(!editable);
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    onDelete(id);
+  };
+
+  const handleSave = () => {
+    setEditable(true);
+  }
+
+  const handleCancel = () => {
+    console.log(cacheData);
+    handleOnEdit(id, cacheData);
+    setEditable(true);
+  }
 
   return (
     <tbody key={id}>
@@ -118,8 +149,10 @@ const TableContent = ({ data }) => {
         </td>
         <td>{age}</td>
         <td>
-          <button onClick={handleEdit}>Edit</button>
-          <button onClick={handleDelete}>delete</button>
+          {editable && (<><button onClick={handleEdit}>Edit</button><button onClick={handleDelete}>delete</button></>)}
+          {!editable && (<><button onClick={handleSave}>save</button><button onClick={handleCancel}>cancel</button></>)}
+
+          
         </td>
       </tr>
     </tbody>
