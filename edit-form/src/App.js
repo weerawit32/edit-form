@@ -5,11 +5,12 @@ import { v4 as uuid } from "uuid";
 import * as yup from "yup";
 import { userSchema } from "./Validations/UserValidation";
 // import Table from 'react-bootstrap/Table';
+import { AddToLocalStorage} from './addToLocalStorage'
 
 function App() {
   const unique_id = uuid();
   const small_id = unique_id.slice(0, 3);
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = AddToLocalStorage("key", []);
   const [person, setPerson] = useState(() => {
     return {
       id: "",
@@ -83,22 +84,25 @@ function App() {
   );
 }
 
-const PeopleList = ({ people, handleOnEdit, onDelete }) => {
+function PeopleList ({ people, handleOnEdit, onDelete }) {
   return (
-    <table striped bordered hover>
-      <thead>
-        <tr>
-          <th> Name</th>
-          <th>Age</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      {people && people.map((data) => <TableContent key={data.id} data={data} handleOnEdit={handleOnEdit} onDelete={onDelete} />)}
-    </table>
+    <div className="mx-auto">
+
+      <table striped bordered hover className="mx-auto">
+        <thead>
+          <tr>
+            <th> Name</th>
+            <th>Age</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        {people && people.map((data) => <TableContent key={data.id} data={data} handleOnEdit={handleOnEdit} onDelete={onDelete} />)}
+      </table>
+    </div>
   );
 };
 
-const TableContent = ({ data, handleOnEdit, onDelete }) => {
+function TableContent ({ data, handleOnEdit, onDelete }) {
   const { id, name, age } = data;
   const [editable, setEditable] = useState(true);
   const [cacheData, setCacheData] = useState(null);
