@@ -57,8 +57,9 @@ function App() {
   }, [people]);
 
   return (
-    <div>
-      <PeopleList people={people} handleOnEdit={handleOnEdit} onDelete={onDelete} />
+    <div >
+      {people.length > 0 && <PeopleList people={people} handleOnEdit={handleOnEdit} onDelete={onDelete} />}
+      
       <div className="App">
         <form onSubmit={handleOnSubmit}>
           <input
@@ -86,7 +87,7 @@ function App() {
 
 function PeopleList ({ people, handleOnEdit, onDelete }) {
   return (
-    <div className="mx-auto">
+    <div className="mx-auto mb-3">
 
       <table striped bordered hover className="mx-auto">
         <thead>
