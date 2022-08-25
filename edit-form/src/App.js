@@ -93,12 +93,12 @@ function App() {
                 setShowForm(!showForm);
               }}
             >
-              Cancle
+              cancel
             </button>
           </form>
         )}
 
-        <button onClick={() => setShowForm(!showForm)}>ADD</button>
+        <button onClick={() => setShowForm(true)}>ADD</button>
       </div>
     </div>
   );
