@@ -5,12 +5,13 @@ import { v4 as uuid } from "uuid";
 import * as yup from "yup";
 import { userSchema } from "./Validations/UserValidation";
 // import Table from 'react-bootstrap/Table';
-import { AddToLocalStorage} from './addToLocalStorage'
+import { AddToLocalStorage } from "./addToLocalStorage";
 
 function App() {
   const unique_id = uuid();
   const small_id = unique_id.slice(0, 3);
   const [people, setPeople] = AddToLocalStorage("key", []);
+  const [showForm, setShowForm] = useState(false);
   const [person, setPerson] = useState(() => {
     return {
       id: "",
@@ -23,21 +24,21 @@ function App() {
 
   const handleOnEdit = (id, data) => {
     setPeople((prevPeople) => {
-      const index = prevPeople.findIndex(person => person.id === id);
+      const index = prevPeople.findIndex((person) => person.id === id);
       const newPeople = [...prevPeople];
       newPeople[index] = data;
-      
+
       return newPeople;
-    })
-  }
+    });
+  };
 
   const onDelete = (id) => {
     setPeople((prevPeople) => {
-      const newPeople = prevPeople.filter(person => person.id !== id);
-      
+      const newPeople = prevPeople.filter((person) => person.id !== id);
+
       return newPeople;
-    })
-  }
+    });
+  };
 
   const handleOnChange = (e) => {
     setPerson({ ...person, [e.target.name]: e.target.value, id: small_id });
@@ -57,38 +58,55 @@ function App() {
   }, [people]);
 
   return (
-    <div >
-      {people.length > 0 && <PeopleList people={people} handleOnEdit={handleOnEdit} onDelete={onDelete} />}
-      
+    <div>
+      {people.length > 0 && (
+        <PeopleList
+          people={people}
+          handleOnEdit={handleOnEdit}
+          onDelete={onDelete}
+        />
+      )}
+
       <div className="App">
-        <form onSubmit={handleOnSubmit}>
-          <input
-            placeholder="Enter Your name..."
-            type="text"
-            name="name"
-            value={name}
-            onChange={handleOnChange}
-            required
-          ></input>
-          <input
-            placeholder="Enter Your age..."
-            type="text"
-            name="age"
-            value={age}
-            onChange={handleOnChange}
-            required
-          ></input>
-          <button>OK</button>
-        </form>
+        {showForm && (
+          <form className="mb-3" onSubmit={handleOnSubmit}>
+            <input
+              placeholder="Enter Your name..."
+              type="text"
+              name="name"
+              value={name}
+              onChange={handleOnChange}
+              required
+            ></input>
+            <input
+              placeholder="Enter Your age..."
+              type="text"
+              name="age"
+              value={age}
+              onChange={handleOnChange}
+              required
+            ></input>
+            <button>SAVE</button>
+            <button
+              onClick={() => {
+                setPerson({ name: "", age: "" });
+                setShowForm(!showForm);
+              }}
+            >
+              Cancle
+            </button>
+          </form>
+        )}
+
+        <button onClick={() => setShowForm(!showForm)}>ADD</button>
       </div>
     </div>
   );
 }
 
-function PeopleList ({ people, handleOnEdit, onDelete }) {
+function PeopleList({ people, handleOnEdit, onDelete }) {
   return (
     <div className="mx-auto mb-3">
-
       <table striped bordered hover className="mx-auto">
         <thead>
           <tr>
@@ -97,13 +115,21 @@ function PeopleList ({ people, handleOnEdit, onDelete }) {
             <th>Action</th>
           </tr>
         </thead>
-        {people && people.map((data) => <TableContent key={data.id} data={data} handleOnEdit={handleOnEdit} onDelete={onDelete} />)}
+        {people &&
+          people.map((data) => (
+            <TableContent
+              key={data.id}
+              data={data}
+              handleOnEdit={handleOnEdit}
+              onDelete={onDelete}
+            />
+          ))}
       </table>
     </div>
   );
-};
+}
 
-function TableContent ({ data, handleOnEdit, onDelete }) {
+function TableContent({ data, handleOnEdit, onDelete }) {
   const { id, name, age } = data;
   const [editable, setEditable] = useState(true);
   const [cacheData, setCacheData] = useState(null);
@@ -115,7 +141,7 @@ function TableContent ({ data, handleOnEdit, onDelete }) {
 
   const handleOnChange = (e) => {
     // setDatas({ ...datas, [e.target.name]: e.target.value });
-    handleOnEdit(id, {...data, [e.target.name]: e.target.value});
+    handleOnEdit(id, { ...data, [e.target.name]: e.target.value });
   };
 
   const handleEdit = () => {
@@ -129,13 +155,13 @@ function TableContent ({ data, handleOnEdit, onDelete }) {
 
   const handleSave = () => {
     setEditable(true);
-  }
+  };
 
   const handleCancel = () => {
     console.log(cacheData);
     handleOnEdit(id, cacheData);
     setEditable(true);
-  }
+  };
 
   return (
     <tbody key={id}>
@@ -152,16 +178,34 @@ function TableContent ({ data, handleOnEdit, onDelete }) {
             required
           ></input>
         </td>
-        <td>{age}</td>
         <td>
-          {editable && (<><button onClick={handleEdit}>Edit</button><button onClick={handleDelete}>delete</button></>)}
-          {!editable && (<><button onClick={handleSave}>save</button><button onClick={handleCancel}>cancel</button></>)}
-
-          
+          <input
+            readOnly={editable}
+            placeholder="Enter Your name..."
+            type="text"
+            name="age"
+            value={age}
+            onChange={handleOnChange}
+            required
+          ></input>
+        </td>
+        <td>
+          {editable && (
+            <>
+              <button onClick={handleEdit}>Edit</button>
+              <button onClick={handleDelete}>delete</button>
+            </>
+          )}
+          {!editable && (
+            <>
+              <button onClick={handleSave}>save</button>
+              <button onClick={handleCancel}>cancel</button>
+            </>
+          )}
         </td>
       </tr>
     </tbody>
   );
-};
+}
 
 export default App;
