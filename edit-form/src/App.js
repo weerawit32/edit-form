@@ -2,8 +2,8 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Fragment, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import * as yup from "yup";
-import { userSchema } from "./Validations/UserValidation";
+// import * as yup from "yup";
+// import { userSchema } from "./Validations/UserValidation";
 // import Table from 'react-bootstrap/Table';
 import { AddToLocalStorage } from "./addToLocalStorage";
 
